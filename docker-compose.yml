@@ -1,34 +1,33 @@
-version: "3.8"
+version: '3.9'
+
 services:
   mongo1:
-    image: mongo:5
+    image: mongo:6
     container_name: mongo1
-    restart: always
+    command: --replSet my-replica-set
     ports:
-      - "27017:27017"
+      - 27017:27017
     networks:
-      - mongoCluster
-    command: mongod --replSet myReplicaSet --bind_ip localhost,mongo1
+      - mongo-network
 
   mongo2:
-    image: mongo:5
+    image: mongo:6
     container_name: mongo2
-    restart: always
+    command: --replSet my-replica-set
     ports:
-      - "27018:27017"
+      - 27018:27017
     networks:
-      - mongoCluster
-    command: mongod --replSet myReplicaSet --bind_ip localhost,mongo2
+      - mongo-network
 
   mongo3:
-    image: mongo:5
+    image: mongo:6
     container_name: mongo3
-    restart: always
+    command: --replSet my-replica-set
     ports:
-      - "27019:27017"
+      - 27019:27017
     networks:
-      - mongoCluster
-    command: mongod --replSet myReplicaSet --bind_ip localhost,mongo3
+      - mongo-network
 
 networks:
-  mongoCluster:
+  mongo-network:
+    driver: bridge
