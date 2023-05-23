@@ -1,20 +1,43 @@
+# Task 3
+
+## Installation
+
+```bash
 docker-compose up -d
+```
 
-docker exec -it mongo1 mongosh --eval "rs.initiate({
-\_id: \"myReplicaSet\",
-members: [
-{_id: 0, host: \"mongo1\"},
-{_id: 1, host: \"mongo2\"},
-{_id: 2, host: \"mongo3\"}
-]
-})"
+```bash
+docker-compose exec configsvr01 sh -c "mongosh < /scripts/init-configserver.js"
+```
 
-docker exec -it mongo1 mongosh --eval "rs.status()"
+```bash
+docker-compose exec shard01-a sh -c "mongosh < /scripts/init-shard01.js"
+```
 
-docker exec -it mongo1 mongosh
+```bash
+docker-compose exec shard02-a sh -c "mongosh < /scripts/init-shard02.js"
+```
 
-use myDatabase
-db.createCollection("myCollection")
-db.myCollection.insert({name: "John Doe", age: 30})
+```bash
+docker-compose exec shard03-a sh -c "mongosh < /scripts/init-shard03.js"
+```
 
-docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mongo1
+```bash
+docker-compose exec router01 sh -c "mongosh < /scripts/init-router.js"
+```
+
+```bash
+docker-compose exec router01 mongosh --port 27017
+```
+
+```bash
+sh.enableSharding("MainDatabase")
+```
+
+```bash
+db.adminCommand( { shardCollection: "MainDatabase.MainCollection", key: { oemNumber: "hashed", zipCode: 1, supplierId: 1 } } )
+```
+
+```bash
+python main.py
+```
