@@ -38,6 +38,19 @@ sh.enableSharding("MainDatabase")
 db.adminCommand( { shardCollection: "MainDatabase.MainCollection", key: { oemNumber: "hashed", zipCode: 1, supplierId: 1 } } )
 ```
 
+## Dev environment
+
+Requirements:
+
+- virtualenv package
+- windows 10
+
+```bash
+python -m virtualenv venv
+source ./venv/Scripts/activate
+pip install -r requirements.txt
+```
+
 ```bash
 python main.py
 ```
