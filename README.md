@@ -38,6 +38,10 @@ sh.enableSharding("MainDatabase")
 db.adminCommand( { shardCollection: "MainDatabase.MainCollection", key: { oemNumber: "hashed", zipCode: 1, supplierId: 1 } } )
 ```
 
+```bash
+exit
+```
+
 ## Dev environment
 
 Requirements:
