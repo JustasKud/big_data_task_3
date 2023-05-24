@@ -15,10 +15,11 @@ if __name__ == "__main__":
     PATH = "./data/aisdk-2023-05-01.csv"
     CHUNK_SIZE = 1000
     MAX_ROWS = 300_000
+    MAX_WORKERS = 16
     
     data = list(pd.read_csv(PATH, chunksize=CHUNK_SIZE, nrows=MAX_ROWS))
     
-    with ThreadPoolExecutor(max_workers=16) as executor:
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = {executor.submit(insert_data, chunk): chunk for chunk in data}
         for future in tqdm(as_completed(futures), total=len(data)):
             pass
