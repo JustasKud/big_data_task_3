@@ -38,7 +38,7 @@ def insert_data(chunk):
 	client.close()
 
 
-def task_1():
+def task_2():
 	PATH = "./data/aisdk-2023-05-01.csv"
 	CHUNK_SIZE = 1000
 	MAX_ROWS = 100_000
@@ -52,7 +52,7 @@ def task_1():
 			pass
 
 
-def task_2():
+def task_3():
 	MAX_WORKERS = 16
 	client = MongoClient("mongodb://127.0.0.1:27117,127.0.0.1:27118")
 	db = client.shipDB
@@ -79,10 +79,10 @@ if __name__ == "__main__":
 	if len(sys.argv) < 2:
 		print("You need to add an argument 'insert','filter', or 'calculate'.")
 	elif sys.argv[1] == "insert":
-		task_1()
-	elif sys.argv[1] == "filter":
 		task_2()
-	elif sys.argv[1] == "calculate":
+	elif sys.argv[1] == "filter":
 		task_3()
+	elif sys.argv[1] == "calculate":
+		task_4()
 	else:
 		print("Incorrect argument. You need to use 'insert','filter', or 'calculate'.")
