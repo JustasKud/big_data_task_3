@@ -80,7 +80,7 @@ def task_2():
 	PATH = "./data/aisdk-2023-05-01.csv"
 	CHUNK_SIZE = 1000
 	MAX_ROWS = 100_000
-	MAX_WORKERS = 14
+	MAX_WORKERS = 16
 	
 	data = list(pd.read_csv(PATH, chunksize=CHUNK_SIZE, nrows=MAX_ROWS))
 	
@@ -91,7 +91,7 @@ def task_2():
 
 
 def task_3():
-	MAX_WORKERS = 14
+	MAX_WORKERS = 16
 	client = MongoClient("mongodb://127.0.0.1:27117,127.0.0.1:27118")
 	db = client.shipDB
 	collection = db.ships
