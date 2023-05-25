@@ -1,9 +1,47 @@
 from pymongo import MongoClient
 import pandas as pd
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import multiprocessing as mp
 from tqdm import tqdm
 import sys
+from datetime import datetime
+import matplotlib.pyplot as plt
 
+
+def generate_histogram(mmsi):
+	client = MongoClient("mongodb://127.0.0.1:27117,127.0.0.1:27118")
+	db = client.shipDB
+	collection = db.filtered_ships
+
+	pipeline = [
+		{"$match": {
+			"MMSI": mmsi["_id"]
+		}}
+	]
+
+	data = list(collection.aggregate(pipeline))
+	client.close()
+	
+	sorted_data = sorted(data, key=lambda d: d["# Timestamp"])
+	previous_timestamp = None
+	delta_t_values = []
+
+	for document in sorted_data:
+		timestamp_str = document['# Timestamp']
+		timestamp = datetime.strptime(timestamp_str, '%d/%m/%Y %H:%M:%S')
+		if previous_timestamp is not None:
+			delta_t = (timestamp - previous_timestamp).total_seconds() * 1000
+			delta_t_values.append(delta_t)
+			print(f"Vessel: {document['MMSI']}, Delta t: {delta_t} ms")
+
+		previous_timestamp = timestamp
+	
+	plt.hist(delta_t_values, bins=10)
+	plt.xlabel('Delta t (milliseconds)')
+	plt.ylabel('Frequency')
+	plt.title(f'Histogram of Delta t of vessel {mmsi["_id"]}')
+	plt.savefig(f'./figs/delta_t_histogram_of_{mmsi["_id"]}.png')
+	plt.close()
 
 def insert_filtered_data(mmsi):
 	client = MongoClient("mongodb://127.0.0.1:27117,127.0.0.1:27118")
@@ -42,7 +80,7 @@ def task_2():
 	PATH = "./data/aisdk-2023-05-01.csv"
 	CHUNK_SIZE = 1000
 	MAX_ROWS = 100_000
-	MAX_WORKERS = 16
+	MAX_WORKERS = 14
 	
 	data = list(pd.read_csv(PATH, chunksize=CHUNK_SIZE, nrows=MAX_ROWS))
 	
@@ -53,7 +91,7 @@ def task_2():
 
 
 def task_3():
-	MAX_WORKERS = 16
+	MAX_WORKERS = 14
 	client = MongoClient("mongodb://127.0.0.1:27117,127.0.0.1:27118")
 	db = client.shipDB
 	collection = db.ships
@@ -73,6 +111,24 @@ def task_3():
 		futures = {executor.submit(insert_filtered_data, chunk): chunk for chunk in over_100_data}
 		for future in tqdm(as_completed(futures), total=len(over_100_data)):
 			pass
+
+
+def task_4():
+	client = MongoClient("mongodb://127.0.0.1:27117,127.0.0.1:27118")
+	db = client.shipDB
+	collection = db.filtered_ships
+	collection.create_index([("MMSI", 1)])
+	
+	pipeline = [
+		{"$group": {"_id": "$MMSI", "count": {"$sum": 1}}},
+	]
+	
+	data = list(collection.aggregate(pipeline))
+	client.close()
+	
+	MAX_WORKERS = 14
+	with mp.Pool(MAX_WORKERS) as pool:
+		pool.map(generate_histogram, data)
 
 
 if __name__ == "__main__":
