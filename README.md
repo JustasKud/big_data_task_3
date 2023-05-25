@@ -71,13 +71,19 @@ exit
 Requirements:
 
 - virtualenv package
-- windows 10
 
-Initialize a virtual environment if not initialized:
+Initialize a virtual environment if not initialized (Windows):
 
 ```bash
 python -m virtualenv venv
 source ./venv/Scripts/activate
+```
+
+Initialize a virtual environment if not initialized (Mac/Linux):
+
+```bash
+python -m virtualenv venv
+source ./venv/bin/activate
 ```
 
 Install the requirements:
@@ -86,7 +92,7 @@ Install the requirements:
 pip install -r requirements.txt
 ```
 
-To insert data, run this command:
+I assume the data is stored in a "data" folder in root. To insert data, run this command:
 
 ```bash
 python main.py insert
@@ -96,6 +102,12 @@ To filter data, run this command:
 
 ```bash
 python main.py filter
+```
+
+Make sure to have a directory to store created figures:
+
+```bash
+mkdir figs
 ```
 
 To perform calculations=, run this command:

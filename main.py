@@ -79,7 +79,7 @@ def insert_data(chunk):
 def task_2():
 	PATH = "./data/aisdk-2023-05-01.csv"
 	CHUNK_SIZE = 1000
-	MAX_ROWS = 100_000
+	MAX_ROWS = 1_000_000
 	MAX_WORKERS = 16
 	
 	data = list(pd.read_csv(PATH, chunksize=CHUNK_SIZE, nrows=MAX_ROWS))
